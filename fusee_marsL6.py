@@ -2,9 +2,7 @@ import math
 import random
 import time
 import matplotlib.pyplot as plt
-import csv
- 
-
+import csv 
 # Constantes existantes
 G = 6.67430e-11
 M_terre = 5.97e24
@@ -272,26 +270,70 @@ def generer_solution(incident_description):
     }
     return random.choice(solutions.get(incident_description, ["Aucune solution disponible"])) 
 
-def calculer_perturbation_meteorite():
-    # Générer une perturbation aléatoire en termes de vitesse et de direction
-    changement_vitesse = random.uniform(-50, 50)  # en m/s
-    angle_perturbation = random.uniform(0, 360)  # en degrés
+
+def generer_perturbation_meteorite(masse_vaisseau=1000, masse_meteorite=0.1):
+    """
+    Génère une perturbation due à l'impact d'un météorite sur un vaisseau.
+    
+    Args:
+        masse_vaisseau (float): Masse du vaisseau en kg (par défaut 1000 kg).
+        masse_meteorite (float): Masse du météorite en kg (par défaut 0.1 kg).
+    
+    Returns:
+        tuple: (changement_vitesse, angle_perturbation)
+            - changement_vitesse (float): Variation de vitesse en m/s.
+            - angle_perturbation (float): Angle de la perturbation en degrés.
+    """
+    # Limiter la perturbation en fonction de la conservation de la quantité de mouvement
+    vitesse_meteorite = random.uniform(10, 100)  # Vitesse relative typique en m/s
+    changement_vitesse = (masse_meteorite * vitesse_meteorite) / masse_vaisseau
+    changement_vitesse = min(changement_vitesse, 50)  # Limite réaliste
+    angle_perturbation = random.uniform(0, 360)  # Angle aléatoire en degrés
+    
     return changement_vitesse, angle_perturbation
 
-def appliquer_perturbation(vitesse, angle, changement_vitesse, angle_perturbation):
+def appliquer_perturbation(vitesse_initiale, angle_initial, changement_vitesse, angle_perturbation):
+    """
+    Applique une perturbation à la trajectoire du vaisseau et calcule la nouvelle vitesse et direction.
+    
+    Args:
+        vitesse_initiale (float): Vitesse initiale du vaisseau en m/s.
+        angle_initial (float): Angle initial de la trajectoire en degrés.
+        changement_vitesse (float): Variation de vitesse due à la perturbation en m/s.
+        angle_perturbation (float): Angle de la perturbation en degrés.
+    
+    Returns:
+        tuple: (nouvelle_vitesse, angle_resultant)
+            - nouvelle_vitesse (float): Nouvelle vitesse du vaisseau en m/s.
+            - angle_resultant (float): Nouvel angle de la trajectoire en degrés [0, 360].
+    
+    Raises:
+        ValueError: Si la vitesse initiale est négative.
+    """
+    if vitesse_initiale < 0:
+        raise ValueError("La vitesse initiale ne peut pas être négative.")
+    
     # Convertir les angles en radians
-    angle_rad = math.radians(angle)
+    angle_rad = math.radians(angle_initial)
     angle_perturbation_rad = math.radians(angle_perturbation)
     
-    # Calculer les nouvelles composantes de la vitesse
-    vitesse_x = vitesse * math.cos(angle_rad) + changement_vitesse * math.cos(angle_perturbation_rad)
-    vitesse_y = vitesse * math.sin(angle_rad) + changement_vitesse * math.sin(angle_perturbation_rad)
+    # Calculer les composantes de la vitesse (vecteurs)
+    vitesse_x = vitesse_initiale * math.cos(angle_rad) + changement_vitesse * math.cos(angle_perturbation_rad)
+    vitesse_y = vitesse_initiale * math.sin(angle_rad) + changement_vitesse * math.sin(angle_perturbation_rad)
     
     # Calculer la nouvelle vitesse et son angle
     nouvelle_vitesse = math.sqrt(vitesse_x**2 + vitesse_y**2)
-    nouvel_angle = math.degrees(math.atan2(vitesse_y, vitesse_x))
     
-    return nouvelle_vitesse, nouvel_angle
+    # Calculer l'angle resultant et le normaliser dans [0, 360]
+    angle_resultant = math.degrees(math.atan2(vitesse_y, vitesse_x))
+    angle_resultant = (angle_resultant + 360) % 360
+    
+    # Vérification que la vitesse reste positive
+    if nouvelle_vitesse < 1e-6:  # Seuil pour éviter des vitesses nulles
+        nouvelle_vitesse = 0
+        angle_resultant = angle_initial  # Conserver l'angle initial si vitesse nulle
+    
+    return nouvelle_vitesse, angle_resultant
 
 def calculer_poussée(isp, debit_massique):
     # Poussée = Isp * débit_massique * g0
