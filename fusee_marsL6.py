@@ -160,6 +160,7 @@ def generer_incident():
     ]
     incident = random.choice(incidents)
     return incident
+import random
 
 def generer_solution(incident_description):
     solutions = {
@@ -217,9 +218,59 @@ def generer_solution(incident_description):
             "Correction de trajectoire par les propulseurs principaux",
             "Réparation des dommages structurels en vol",
             "Redistribution du carburant pour compenser la perte de masse"
+        ],
+        "Surcharge dans le réseau électrique": [
+            "Redirection de l'énergie vers les systèmes critiques",
+            "Réinitialisation des disjoncteurs automatiques",
+            "Utilisation des batteries secondaires"
+        ],
+        "Perte de pression dans une section de l'habitacle": [
+            "Isolation de la section affectée",
+            "Activation des systèmes de pressurisation d'urgence",
+            "Application d'un patch d'étanchéité temporaire"
+        ],
+        "Dysfonctionnement des capteurs environnementaux": [
+            "Basculement vers les capteurs redondants",
+            "Recalibrage des capteurs en vol",
+            "Utilisation des données archivées pour estimation"
+        ],
+        "Erreur dans le système de propulsion ionique": [
+            "Redémarrage du système de propulsion",
+            "Ajustement des paramètres de poussée ionique",
+            "Passage à un système de propulsion alternatif"
+        ],
+        "Défaillance d'un bras robotique externe": [
+            "Activation du bras robotique de secours",
+            "Diagnostic et réparation du bras principal",
+            "Utilisation manuelle temporaire des commandes"
+        ],
+        "Contamination détectée dans le système d'eau": [
+            "Activation du système de purification secondaire",
+            "Isolement du réservoir contaminé",
+            "Utilisation des réserves d'eau d'urgence"
+        ],
+        "Anomalie dans le bouclier thermique": [
+            "Inspection par caméra externe pour évaluer les dommages",
+            "Réparation ciblée avec des matériaux d'urgence",
+            "Ajustement de l'angle de rentrée pour minimiser l'exposition"
+        ],
+        "Surchauffe des processeurs centraux": [
+            "Réduction de la charge de calcul non essentielle",
+            "Activation du système de refroidissement des processeurs",
+            "Basculement vers les processeurs secondaires"
+        ],
+        "Détection de débris spatiaux à proximité": [
+            "Manoeuvre d'évitement par propulseurs",
+            "Activation des capteurs de suivi des débris",
+            "Renforcement temporaire des boucliers structurels"
+        ],
+        "Panne dans le système de support de vie": [
+            "Passage au système de support de vie redondant",
+            "Réparation des composants défaillants en vol",
+            "Réduction de la consommation d'énergie des systèmes secondaires"
         ]
     }
-    return random.choice(solutions.get(incident_description, ["Aucune solution disponible"]))
+    return random.choice(solutions.get(incident_description, ["Aucune solution disponible"])) 
 
 def calculer_perturbation_meteorite():
     # Générer une perturbation aléatoire en termes de vitesse et de direction
